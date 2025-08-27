@@ -1,0 +1,14 @@
+[
+  {
+    "day": 1,
+    "title": "Progress Steps",
+    "image": "assets/images/day1.png",
+    "demoUrl": "projects/day1/index.html"
+  },
+  {
+    "day": 2,
+    "title": "Rotating Navigation",
+    "image": "assets/images/day2.png",
+    "demoUrl": "projects/day2/index.html"
+  }
+]
