@@ -3,23 +3,307 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>My Portfolio</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <title>50 Projects in 50 Days — Portfolio</title>
+  <meta name="description" content="Mini web projects using Vanilla HTML, CSS & JavaScript" />
+  <style>
+    :root{
+      --bg: #13071c;
+      --bg-2: #240a36;
+      --text: #f2eaff;
+      --muted: #c9b9f2;
+      --accent: #8b5cf6;   /* purple */
+      --card: #1e1230;
+      --overlay: #0f0b1aee;
+      --badge: #6d28d9;
+      --link: #a78bfa;
+      --grid-gap: 14px;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1000px 400px at 50% -10%, #3b1870 0, transparent 60%),
+        radial-gradient(800px 400px at 100% 0%, #2b124f 0, transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      min-height: 100%;
+    }
+
+    /* ======= Header / Nav ======= */
+    header{
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(120%) blur(6px);
+      background: linear-gradient(180deg, #160b25c0, #160b2500);
+      border-bottom: 1px solid #2a1e44;
+    }
+    .container{ width: min(1200px, 92vw); margin-inline: auto; }
+
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:.6rem; text-decoration:none; color: var(--text);
+      font-weight: 700; letter-spacing:.3px;
+    }
+    .brand .logo{
+      width:32px; height:32px; border-radius:10px;
+      display:grid; place-items:center; font-size:14px; font-weight:900;
+      background: conic-gradient(from 200deg, #f59e0b, #ef4444, #8b5cf6, #10b981, #f59e0b);
+      color:#0b0416; box-shadow: var(--shadow);
+    }
+
+    .menu{
+      display:flex; align-items:center; gap: 18px;
+    }
+    .menu a{
+      color: var(--muted); text-decoration:none; font-weight:600;
+      padding: 8px 10px; border-radius: 10px;
+    }
+    .menu a:hover, .menu a:focus-visible{
+      color: var(--text); background:#2b1e45;
+      outline: none;
+    }
+
+    /* ======= Hero ======= */
+    .hero{
+      padding: clamp(56px, 10vw, 120px) 0 36px;
+      text-align:center;
+      position: relative;
+    }
+    .hero h1{
+      margin: 0 0 10px;
+      font-size: clamp(28px, 3.8vw, 44px);
+      line-height: 1.15;
+      letter-spacing: .6px;
+    }
+    .hero .kicker{
+      color: var(--accent); font-weight: 800; letter-spacing: .6px;
+      text-transform: uppercase; font-size: 0.95rem;
+    }
+    .hero p{
+      margin: 10px 0 4px;
+      color: var(--muted);
+      font-size: clamp(16px, 1.6vw, 18px);
+    }
+
+    /* ======= Grid ======= */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--grid-gap);
+      padding: 18px 0 60px;
+    }
+    @media (max-width:1100px){ .grid{ grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width:800px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width:560px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+
+    .card{
+      position: relative; overflow: hidden; border-radius: var(--radius);
+      background: var(--card); box-shadow: var(--shadow); min-height: 130px;
+      aspect-ratio: 4/3;
+      isolation: isolate; /* keep overlays */
+    }
+
+    .thumb{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      filter: saturate(92%) contrast(1.02) brightness(.92);
+      transition: transform .4s ease, filter .4s ease;
+    }
+
+    .card::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.35));
+      opacity:.6; transition: opacity .35s ease;
+      pointer-events:none;
+    }
+
+    .overlay{
+      position:absolute; inset:0; display:grid; place-items:center;
+      background: var(--overlay);
+      opacity:0; transition: opacity .35s ease;
+    }
+
+    .overlay .content{
+      text-align:center; padding: 10px 12px;
+    }
+    .overlay h3{
+      margin:0 0 10px; font-size: 1rem; font-weight: 800;
+    }
+
+    .btns{ display:flex; gap:10px; justify-content:center; flex-wrap: wrap; }
+    .btn{
+      --border: #3b2a61;
+      display:inline-block; padding: 8px 12px; border-radius: 999px;
+      border:1px solid var(--border); text-decoration:none; color: var(--text);
+      font-weight: 700; font-size: .9rem; letter-spacing:.2px;
+      background: #2b1e45;
+    }
+    .btn:hover, .btn:focus-visible{
+      background: var(--accent); color: #0d0718; outline:none; border-color: transparent;
+    }
+
+    .badge{
+      position:absolute; top:8px; right:8px; z-index:2;
+      background: var(--badge); color:#fff; font-weight:900; font-size:.82rem;
+      padding: 6px 10px; border-radius: 999px; letter-spacing:.3px;
+      box-shadow: var(--shadow);
+    }
+
+    .card:focus-within .overlay,
+    .card:hover .overlay{ opacity:1; }
+    .card:focus-within .thumb,
+    .card:hover .thumb{ transform: scale(1.06); filter: brightness(.8) saturate(1.05); }
+
+    /* Footer */
+    footer{
+      color: var(--muted);
+      padding: 36px 0 60px; text-align:center;
+      border-top: 1px solid #2a1e44;
+    }
+    footer a{ color: var(--link); text-decoration:none; }
+    footer a:hover, footer a:focus-visible{ color: var(--text); outline:none; }
+  </style>
 </head>
 <body>
-  <h1>Projects</h1>
-
-  <template id="project-template">
-    <div class="project-card">
-      <img class="thumb" alt="" />
-      <div class="overlay">
-        <p class="title"></p>
-        <a class="demo-link" target="_blank" rel="noopener">Live Demo</a>
-      </div>
+  <!-- ======= Header ======= -->
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main">
+      <a class="brand" href="#">
+        <span class="logo">50</span>
+        <span>Projects</span>
+      </a>
+      <nav class="menu" aria-label="Top menu">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
-  </template>
+  </header>
 
-  <div id="projects-grid"></div>
-  <script src="./app.js" defer></script>
+  <!-- ======= Hero ======= -->
+  <section class="hero">
+    <div class="container">
+      <div class="kicker">50 Projects in 50 Days</div>
+      <h1>50 Mini Web Projects using Vanilla HTML, CSS &amp; JavaScript</h1>
+      <p>Credits: “50 Projects 50 Days” by Brad Traversy &amp; Florin Pop</p>
+    </div>
+  </section>
+
+  <!-- ======= Projects Grid ======= -->
+  <main class="container" id="projects">
+    <div class="grid" id="projects-grid" aria-live="polite"></div>
+  </main>
+
+  <!-- ======= About / Contact placeholders ======= -->
+  <section id="about" class="container" style="padding:30px 0 10px;">
+    <h2 style="margin:0 0 8px;">About</h2>
+    <p style="color:var(--muted);max-width:65ch">
+      Replace this text with your bio. This template is intentionally minimal—just edit the
+      <code>projects</code> array in the script to add real projects, thumbnails, and links.
+    </p>
+  </section>
+
+  <section id="contact" class="container" style="padding:8px 0 50px;">
+    <h2 style="margin:0 0 8px;">Contact</h2>
+    <p style="color:var(--muted)">Add your email / social links here.</p>
+  </section>
+
+  <footer>
+    <div class="container">
+      Built with ♥ using Vanilla HTML, CSS &amp; JS.
+      <br/>Update the data below to add projects.
+    </div>
+  </footer>
+
+  <script>
+    // ========= Editable data =========
+    // Add/modify items here. Use real image URLs or local /images/*.jpg files.
+    // day: number (for badge), title: string, img: string, live: url, code: url
+    const projects = [
+      { day: 1,  title: 'Expanding Cards',         img: 'https://picsum.photos/seed/day1/800/600',  live: '#', code: '#' },
+      { day: 2,  title: 'Progress Steps',          img: 'https://picsum.photos/seed/day2/800/600',  live: '#', code: '#' },
+      { day: 3,  title: 'Rotating Navigation',     img: 'https://picsum.photos/seed/day3/800/600',  live: '#', code: '#' },
+      { day: 4,  title: 'Hidden Search',           img: 'https://picsum.photos/seed/day4/800/600',  live: '#', code: '#' },
+      { day: 5,  title: 'Blurry Loading',          img: 'https://picsum.photos/seed/day5/800/600',  live: '#', code: '#' },
+      { day: 6,  title: 'Scroll Animation',        img: 'https://picsum.photos/seed/day6/800/600',  live: '#', code: '#' },
+      { day: 7,  title: 'Split Landing Page',      img: 'https://picsum.photos/seed/day7/800/600',  live: '#', code: '#' },
+      { day: 8,  title: 'Form Wave',               img: 'https://picsum.photos/seed/day8/800/600',  live: '#', code: '#' },
+      { day: 9,  title: 'Sound Board',             img: 'https://picsum.photos/seed/day9/800/600',  live: '#', code: '#' },
+      { day:10,  title: 'Dad Jokes',               img: 'https://picsum.photos/seed/day10/800/600', live: '#', code: '#' },
+      { day:11,  title: 'Event Keycodes',          img: 'https://picsum.photos/seed/day11/800/600', live: '#', code: '#' },
+      { day:12,  title: 'FAQ Collapse',            img: 'https://picsum.photos/seed/day12/800/600', live: '#', code: '#' },
+      { day:13,  title: 'Random Choice Picker',    img: 'https://picsum.photos/seed/day13/800/600', live: '#', code: '#' },
+      { day:14,  title: 'Animated Navigation',     img: 'https://picsum.photos/seed/day14/800/600', live: '#', code: '#' },
+      { day:15,  title: 'Incrementing Counter',    img: 'https://picsum.photos/seed/day15/800/600', live: '#', code: '#' },
+      { day:16,  title: 'Drink Water',             img: 'https://picsum.photos/seed/day16/800/600', live: '#', code: '#' },
+      { day:17,  title: 'Movie App',               img: 'https://picsum.photos/seed/day17/800/600', live: '#', code: '#' },
+      { day:18,  title: 'Background Slider',       img: 'https://picsum.photos/seed/day18/800/600', live: '#', code: '#' },
+      { day:19,  title: 'Theme Clock',             img: 'https://picsum.photos/seed/day19/800/600', live: '#', code: '#' },
+      { day:20,  title: 'Button Ripple Effect',    img: 'https://picsum.photos/seed/day20/800/600', live: '#', code: '#' },
+      // …keep adding up to day 50 if you want
+    ];
+
+    // ========= Render cards =========
+    const grid = document.getElementById('projects-grid');
+
+    function createCard({day, title, img, live, code}){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('tabindex','0'); // keyboard focus
+
+      // day badge
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = `Day ${day}`;
+      card.appendChild(badge);
+
+      // image
+      const image = document.createElement('img');
+      image.className = 'thumb';
+      image.alt = title;
+      image.loading = 'lazy';
+      image.src = img || 'https://picsum.photos/seed/fallback/800/600';
+      card.appendChild(image);
+
+      // overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.innerHTML = `
+        <div class="content">
+          <h3>${escapeHtml(title)}</h3>
+          <div class="btns">
+            <a class="btn" href="${live || '#'}" target="_blank" rel="noopener">Live Demo</a>
+            <a class="btn" href="${code || '#'}" target="_blank" rel="noopener">Code</a>
+          </div>
+        </div>`;
+      card.appendChild(overlay);
+
+      return card;
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[s]));
+    }
+
+    // Paint the grid
+    projects.forEach(p => grid.appendChild(createCard(p)));
+
+    // Optional: smooth anchor scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
+  </script>
 </body>
 </html>
